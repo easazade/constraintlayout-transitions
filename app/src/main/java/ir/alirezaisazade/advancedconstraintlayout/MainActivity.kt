@@ -5,34 +5,35 @@ import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
 import android.support.transition.ChangeBounds
 import android.support.transition.TransitionManager
+import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.app.AppCompatActivity
 import android.view.animation.AnticipateOvershootInterpolator
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+
+    var changed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Observable.just("nothing").delay(3000, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    val constraintSet = ConstraintSet()
-                    constraintSet.clone(this, R.layout.activity_main_2)
+        imageView.setOnClickListener {
+            val constraintSet1 = ConstraintSet()
+            constraintSet1.clone(this,R.layout.activity_main)
+            val constraintSet2 = ConstraintSet()
+            constraintSet2.clone(this, R.layout.activity_main_2)
 
-                    val transition = ChangeBounds()
-                    transition.interpolator = AnticipateOvershootInterpolator(1.0f)
-                    transition.duration = 1200
+            val transition = ChangeBounds()
+            transition.interpolator = FastOutSlowInInterpolator()
+            transition.duration = 500
 
-                    val constraintLayout: ConstraintLayout = findViewById(R.id.rootView)
-                    TransitionManager.beginDelayedTransition(rootView, transition)
-                    constraintSet.applyTo(constraintLayout)
-                }
-
+            val constraintLayout: ConstraintLayout = findViewById(R.id.rootView)
+            TransitionManager.beginDelayedTransition(rootView, transition)
+            val cs:ConstraintSet = if (changed) constraintSet1 else constraintSet2
+            cs.applyTo(constraintLayout)
+            changed = !changed
+        }
 
     }
 }
