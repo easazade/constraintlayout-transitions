@@ -9,14 +9,22 @@ import kotlinx.android.synthetic.main.constraint_set_auto_transition_activity.*
 
 class ConstraintSetAutoTransitionActivity : AppCompatActivity() {
 
+    private var changed = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.constraint_set_auto_transition_activity)
 
+        val container = findViewById<ConstraintLayout>(R.id.activityTransitionSet)
+        val defaultState = ConstraintSet()
+        val triggeredState = ConstraintSet()
+        defaultState.clone(container)
+        triggeredState.clone(container)
+
         activityTransitionSetSquare.setOnClickListener {
-            val container = findViewById<ConstraintLayout>(R.id.activityTransitionSet)
-            val triggeredState = ConstraintSet()
-            triggeredState.clone(container)
+
+            defaultState.clear(R.id.activityTransitionSetSquare, ConstraintSet.END)
+
             triggeredState.connect(R.id.activityTransitionSetSquare, ConstraintSet.END,
                     ConstraintSet.PARENT_ID, ConstraintSet.END)
 
@@ -35,7 +43,13 @@ class ConstraintSetAutoTransitionActivity : AppCompatActivity() {
             to our layout by AutoTransition
             */
             TransitionManager.beginDelayedTransition(container)
-            triggeredState.applyTo(container)
+            if (changed) {
+                changed = false
+                defaultState.applyTo(container)
+            } else {
+                changed = true
+                triggeredState.applyTo(container)
+            }
         }
     }
 }
