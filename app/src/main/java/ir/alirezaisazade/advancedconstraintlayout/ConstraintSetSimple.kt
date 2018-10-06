@@ -14,7 +14,6 @@ class ConstraintSetSimple : AppCompatActivity() {
         //like a fab button should have different ids we can achieve this by
         // giving them transition names
 
-
     }
 
 

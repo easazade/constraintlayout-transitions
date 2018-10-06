@@ -21,7 +21,7 @@ class Basic : AppCompatActivity() {
         constraintSet2.clone(this, R.layout.activity_basic_2)
 
         var changed = false
-        findViewById<Button>(R.id.basic).setOnClickListener {
+        findViewById<Button>(R.id.basic).setOnClickListener { _ ->
             TransitionManager.beginDelayedTransition(constraintLayout)
             val constraint = if (changed) constraintSet1 else constraintSet2
             constraint.applyTo(constraintLayout)
